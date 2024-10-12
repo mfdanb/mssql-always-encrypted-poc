@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Hosting" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
+			<!--https://learn.microsoft.com/en-us/ef/core/what-is-new/nuget-packages#tools-->
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\MssqlAlwaysEncryptedPoc.Aspire.ServiceDefaults\MssqlAlwaysEncryptedPoc.Aspire.ServiceDefaults.csproj" />
+		<ProjectReference Include="..\MssqlAlwaysEncryptedPoc.ExampleDb\MssqlAlwaysEncryptedPoc.ExampleDb.csproj" />
+	</ItemGroup>
+</Project>

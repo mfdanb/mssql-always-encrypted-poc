@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<Sdk Name="Aspire.AppHost.Sdk" Version="9.0.0-rc.1.24511.1" />
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<IsAspireHost>true</IsAspireHost>
+		<UserSecretsId>b9f9df28-a1bd-4afd-afca-d3372a1cb239</UserSecretsId>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\MssqlAlwaysEncryptedPoc.ExampleDb.Migrations\MssqlAlwaysEncryptedPoc.ExampleDb.Migrations.csproj" />
+		<ProjectReference Include="..\MssqlAlwaysEncryptedPoc.Web.Api\MssqlAlwaysEncryptedPoc.Web.Api.csproj" />
+		<ProjectReference Include="..\MssqlAlwaysEncryptedPoc.Web.Blazor\MssqlAlwaysEncryptedPoc.Web.Blazor.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Aspire.Hosting.AppHost" />
+		<PackageReference Include="Aspire.Hosting.SqlServer" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="appsettings.Development.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="appsettings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+</Project>
