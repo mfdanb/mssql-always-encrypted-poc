@@ -20,8 +20,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MssqlAlwaysEncryptedPoc.Exa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MssqlAlwaysEncryptedPoc.Web.Api", "MssqlAlwaysEncryptedPoc.Web.Api\MssqlAlwaysEncryptedPoc.Web.Api.csproj", "{5203F5A0-262B-42DE-9113-54478A3AE04F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MssqlAlwaysEncryptedPoc.Web.Blazor", "MssqlAlwaysEncryptedPoc.Web.Blazor\MssqlAlwaysEncryptedPoc.Web.Blazor.csproj", "{3FE43FED-8A13-4B94-B5F5-65AA81D86BB4}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MssqlAlwaysEncryptedPoc.ExampleDb.Migrations", "MssqlAlwaysEncryptedPoc.ExampleDb.Migrations\MssqlAlwaysEncryptedPoc.ExampleDb.Migrations.csproj", "{CFBF55A5-DE53-4374-83BC-A861D7A9FFF6}"
 EndProject
 Global
@@ -46,10 +44,6 @@ Global
 		{5203F5A0-262B-42DE-9113-54478A3AE04F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5203F5A0-262B-42DE-9113-54478A3AE04F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5203F5A0-262B-42DE-9113-54478A3AE04F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3FE43FED-8A13-4B94-B5F5-65AA81D86BB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3FE43FED-8A13-4B94-B5F5-65AA81D86BB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3FE43FED-8A13-4B94-B5F5-65AA81D86BB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3FE43FED-8A13-4B94-B5F5-65AA81D86BB4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CFBF55A5-DE53-4374-83BC-A861D7A9FFF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CFBF55A5-DE53-4374-83BC-A861D7A9FFF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CFBF55A5-DE53-4374-83BC-A861D7A9FFF6}.Release|Any CPU.ActiveCfg = Release|Any CPU

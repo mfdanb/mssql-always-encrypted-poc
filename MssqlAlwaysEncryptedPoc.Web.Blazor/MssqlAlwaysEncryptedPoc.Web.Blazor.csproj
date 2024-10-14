@@ -1,7 +1,0 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-
-	<ItemGroup>
-		<ProjectReference Include="..\MssqlAlwaysEncryptedPoc.Aspire.ServiceDefaults\MssqlAlwaysEncryptedPoc.Aspire.ServiceDefaults.csproj" />
-	</ItemGroup>
-
-</Project>

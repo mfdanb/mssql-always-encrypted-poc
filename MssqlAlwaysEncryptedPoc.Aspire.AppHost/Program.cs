@@ -21,11 +21,6 @@ class Program
             .WithReference(sqlDatabase)
             .WaitForCompletion(migrations);
 
-        builder.AddProject<Projects.MssqlAlwaysEncryptedPoc_Web_Blazor>("web-frontend")
-            .WithExternalHttpEndpoints()
-            .WithReference(webapi);
-
-
         builder.Build().Run();
     }
 }
