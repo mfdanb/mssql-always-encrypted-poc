@@ -10,7 +10,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\MssqlAlwaysEncryptedPoc.ExampleDb.Migrations\MssqlAlwaysEncryptedPoc.ExampleDb.Migrations.csproj" />
 		<ProjectReference Include="..\MssqlAlwaysEncryptedPoc.Web.Api\MssqlAlwaysEncryptedPoc.Web.Api.csproj" />
-		<ProjectReference Include="..\MssqlAlwaysEncryptedPoc.Web.Blazor\MssqlAlwaysEncryptedPoc.Web.Blazor.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
