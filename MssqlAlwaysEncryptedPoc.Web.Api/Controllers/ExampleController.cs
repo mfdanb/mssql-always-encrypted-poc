@@ -20,6 +20,6 @@ public class ExampleController : ControllerBase
     [HttpGet(Name = "GetExamples")]
     public async Task<IEnumerable<Example>> Get()
     {
-        return (await _dbContext.Examples.ToListAsync()).Select(e => new Example(e.Id, e.Description));
+        return await _dbContext.Examples.ToListAsync();
     }
 }

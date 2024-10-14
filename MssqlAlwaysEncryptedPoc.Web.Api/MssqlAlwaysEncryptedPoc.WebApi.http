@@ -1,6 +1,6 @@
-@MssqlAlwaysEncryptedPoc.WebApi_HostAddress = http://localhost:5152
+@MssqlAlwaysEncryptedPoc.Web.Api.HostAddress = http://localhost:5152
 
-GET {{MssqlAlwaysEncryptedPoc.WebApi_HostAddress}}/weatherforecast/
+GET {{MssqlAlwaysEncryptedPoc.Web.Api.HostAddress}}/example/
 Accept: application/json
 
 ###

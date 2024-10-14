@@ -16,7 +16,10 @@ public class Program
 
         builder.Services.AddDbContext<ExampleDbContext>(optionsBuilder =>
         {
-            optionsBuilder.UseSqlServer(builder.Configuration.GetConnectionString("sql-database") ?? throw new ArgumentNullException("ConnectionStrings__sql-database is missing"));
+            optionsBuilder.UseSqlServer(
+                builder.Configuration.GetConnectionString("sql-database")
+                ?? throw new InvalidOperationException("ConnectionStrings__sql-database is missing")
+            );
         });
 
         // Swagger/OpenAPI -- https://aka.ms/aspnetcore/swashbuckle
