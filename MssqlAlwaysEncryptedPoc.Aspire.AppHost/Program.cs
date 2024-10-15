@@ -14,10 +14,12 @@ class Program
         var sqlServer = builder.AddSqlServer("SqlServer", sqlPassword)
             .WithDataVolume();
 
-        var exampleDb = sqlServer.AddDatabase("ExampleDb");
+        var exampleDb = sqlServer.AddDatabase("ExampleDb"); // Add database to the connection string
+        var encryptedExampleDb = sqlServer.AddDatabase("EncryptedExampleDb"); // Add database to the connection string
 
         var migrations = builder.AddProject<Projects.MssqlAlwaysEncryptedPoc_ExampleDb_Migrations>("ExampleDb-Migrations")
-            .WithReference(exampleDb, "ExampleDb")
+            .WithReference(exampleDb, "ExampleDb") // Put connection string to the environment variables
+            .WithReference(encryptedExampleDb, "EncryptedExampleDb") // Put connection string to the environment variables
             .WaitFor(sqlServer);
 
         var webapi = builder.AddProject<Projects.MssqlAlwaysEncryptedPoc_Web_Api>("WebApi")

@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
-using MssqlAlwaysEncryptedPoc.ExampleDb;
 using OpenTelemetry.Trace;
 using System.Diagnostics;
 
@@ -17,18 +16,19 @@ public class MigrationService(
 
     protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
-        using var activity = _activitySource.StartActivity("Initializing database", ActivityKind.Client);
+        using var activity = _activitySource.StartActivity("Initializing databases", ActivityKind.Client);
 
         var sw = Stopwatch.StartNew();
 
         try
         {
             using var scope = serviceProvider.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<ExampleDbContext>();
+            var exampleDbContext = scope.ServiceProvider.GetRequiredService<ExampleDbContext>();
+            var encryptedExampleDbContext = scope.ServiceProvider.GetRequiredService<EncryptedExampleDbContext>();
 
-            await EnsureDatabaseIsCreated(dbContext, cancellationToken);
-            await RunMigrations(dbContext, cancellationToken);
-            await SeedExamples(dbContext, cancellationToken);
+            await EnsureDatabaseIsCreated(exampleDbContext, encryptedExampleDbContext, cancellationToken);
+            await RunMigrations(exampleDbContext, encryptedExampleDbContext, cancellationToken);
+            await SeedExamples(exampleDbContext, encryptedExampleDbContext, cancellationToken);
         }
         catch (Exception ex)
         {
@@ -36,54 +36,81 @@ public class MigrationService(
             throw;
         }
 
-        logger.LogInformation("Database initialization completed after {ElapsedMilliseconds}ms", sw.ElapsedMilliseconds);
+        logger.LogInformation("Database initialization completed after {ElapsedMilliseconds}ms",
+            sw.ElapsedMilliseconds);
 
         hostApplicationLifetime.StopApplication();
     }
 
-    private async Task EnsureDatabaseIsCreated(ExampleDbContext dbContext, CancellationToken cancellationToken)
+    private async Task EnsureDatabaseIsCreated(ExampleDbContext exampleDbContext,
+        EncryptedExampleDbContext encryptedExampleDbContext,
+        CancellationToken cancellationToken)
     {
-        var dbCreator = dbContext.GetService<IRelationalDatabaseCreator>();
+        var exampleDbCreator = exampleDbContext.GetService<IRelationalDatabaseCreator>();
+        var encryptedExampleDbCreator = encryptedExampleDbContext.GetService<IRelationalDatabaseCreator>();
 
-        var strategy = dbContext.Database.CreateExecutionStrategy();
+        var exampleStrategy = exampleDbContext.Database.CreateExecutionStrategy();
+        var encryptedExampleStrategy = encryptedExampleDbContext.Database.CreateExecutionStrategy();
 
-        await strategy.ExecuteAsync(async () =>
+        await exampleStrategy.ExecuteAsync(async () =>
         {
-            if (!await dbCreator.ExistsAsync(cancellationToken))
+            if (!await exampleDbCreator.ExistsAsync(cancellationToken))
             {
                 logger.LogInformation("Creating database");
 
-                await dbCreator.CreateAsync(cancellationToken);
+                await exampleDbCreator.CreateAsync(cancellationToken);
+            }
+        });
+
+        await encryptedExampleStrategy.ExecuteAsync(async () =>
+        {
+            if (!await encryptedExampleDbCreator.ExistsAsync(cancellationToken))
+            {
+                logger.LogInformation("Creating encrypted database");
+
+                await encryptedExampleDbCreator.CreateAsync(cancellationToken);
             }
         });
     }
 
-    private async Task RunMigrations(ExampleDbContext dbContext, CancellationToken cancellationToken)
+    private async Task RunMigrations(ExampleDbContext exampleDbContext,
+        EncryptedExampleDbContext encryptedExampleDbContext,
+        CancellationToken cancellationToken)
     {
-        logger.LogInformation("Migrating database");
+        logger.LogInformation("Migrating databases");
 
-        var strategy = dbContext.Database.CreateExecutionStrategy();
+        var exampleStrategy = exampleDbContext.Database.CreateExecutionStrategy();
+        var encryptedExampleStrategy = encryptedExampleDbContext.Database.CreateExecutionStrategy();
 
-        await strategy.ExecuteAsync(dbContext.Database.MigrateAsync, cancellationToken);
+        await exampleStrategy.ExecuteAsync(exampleDbContext.Database.MigrateAsync, cancellationToken);
+        await encryptedExampleStrategy.ExecuteAsync(encryptedExampleDbContext.Database.MigrateAsync, cancellationToken);
     }
 
-    private async Task SeedExamples(ExampleDbContext dbContext, CancellationToken cancellationToken)
+    private async Task SeedExamples(ExampleDbContext exampleDbContext,
+        EncryptedExampleDbContext encryptedExampleDbContext,
+        CancellationToken cancellationToken)
     {
         logger.LogInformation("Seeding database");
 
-        if (!dbContext.Examples.Any())
+        if (!exampleDbContext.Examples.Any() && !encryptedExampleDbContext.EncryptedExamples.Any())
         {
-            List<Example> examples = [
-                new() { Id = Guid.NewGuid(), Description = "Description 1" },
-                new() { Id = Guid.NewGuid(), Description = "Description 2" },
-                new() { Id = Guid.NewGuid(), Description = "Description 3" },
-            ];
+            List<Example> examples = [];
+            List<EncryptedExample> encryptedExamples = [];
 
-            await dbContext.Examples.AddRangeAsync(examples, cancellationToken);
+            for (int i = 1; i <= 10000; i++)
+            {
+                examples.Add(new Example { Id = Guid.NewGuid(), Description = $"Description {i}" });
+                encryptedExamples.Add(new EncryptedExample { Id = Guid.NewGuid(), Description = $"Description {i}" });
+            }
 
-            logger.LogInformation("Seeding {count} examples", examples.Count);
+            await exampleDbContext.Examples.AddRangeAsync(examples, cancellationToken);
+            await encryptedExampleDbContext.EncryptedExamples.AddRangeAsync(encryptedExamples, cancellationToken);
 
-            await dbContext.SaveChangesAsync(cancellationToken);
+            logger.LogInformation("Seeding {Count} examples", examples.Count);
+            logger.LogInformation("Seeding {Count} encrypted examples", encryptedExamples.Count);
+
+            await exampleDbContext.SaveChangesAsync(cancellationToken);
+            await encryptedExampleDbContext.SaveChangesAsync(cancellationToken);
         }
     }
 }

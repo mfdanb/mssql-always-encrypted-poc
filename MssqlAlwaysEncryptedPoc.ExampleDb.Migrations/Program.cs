@@ -18,10 +18,20 @@ public class Program
             .WithTracing(tracing => tracing.AddSource(MigrationService.ActivitySourceName));
 
         builder.Services.AddDbContextPool<ExampleDbContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("ExampleDb") ?? throw new InvalidOperationException("ConnectionStrings__ExampleDb is missing"), sqlOptions =>
-            {
-                sqlOptions.MigrationsAssembly(typeof(Program).Assembly.GetName().Name);
-            }));
+            options.UseSqlServer(
+                builder.Configuration.GetConnectionString("ExampleDb") ??
+                throw new InvalidOperationException("ConnectionStrings__ExampleDb is missing"), sqlOptions =>
+                {
+                    sqlOptions.MigrationsAssembly(typeof(Program).Assembly.GetName().Name);
+                }));
+
+        builder.Services.AddDbContextPool<EncryptedExampleDbContext>(options =>
+            options.UseSqlServer(
+                builder.Configuration.GetConnectionString("EncryptedExampleDb") ??
+                throw new InvalidOperationException("ConnectionStrings__EncryptedExampleDb is missing"), sqlOptions =>
+                {
+                    sqlOptions.MigrationsAssembly(typeof(Program).Assembly.GetName().Name);
+                }));
 
         //builder.EnrichSqlServerDbContext<ExampleDbContext>(); // need the aspire version of efcore to use this
 

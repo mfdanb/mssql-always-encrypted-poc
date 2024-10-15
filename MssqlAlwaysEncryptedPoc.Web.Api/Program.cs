@@ -37,6 +37,27 @@ public class Program
 
             SqlConnection.RegisterColumnEncryptionKeyStoreProviders(encryptionKeyStores);
         });
+        
+        builder.Services.AddDbContext<EncryptedExampleDbContext>(optionsBuilder =>
+        {
+            optionsBuilder.UseSqlServer(builder.Configuration.GetConnectionString("EncryptedExampleDb") 
+                                        ?? throw new InvalidOperationException("ConnectionStrings__EncryptedExampleDb is missing"));
+
+            var configSection = builder.Configuration.GetSection("SqlColumnEncryption");
+
+            var sqlColumnEncryptionKeyReaderServicePrincipal = new ClientSecretCredential(
+                configSection.GetValue<string>("KeyVaultTenantId"),
+                configSection.GetValue<string>("KeyVaultClientId"),
+                configSection.GetValue<string>("KeyVaultClientSecret")
+            );
+
+            var encryptionKeyStores = new Dictionary<string, SqlColumnEncryptionKeyStoreProvider>
+            {
+                { SqlColumnEncryptionAzureKeyVaultProvider.ProviderName, new SqlColumnEncryptionAzureKeyVaultProvider(sqlColumnEncryptionKeyReaderServicePrincipal) }
+            };
+
+            SqlConnection.RegisterColumnEncryptionKeyStoreProviders(encryptionKeyStores);
+        });
 
         // Swagger/OpenAPI -- https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
