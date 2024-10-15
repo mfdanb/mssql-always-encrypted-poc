@@ -1,0 +1,66 @@
+services:
+
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-CU8-ubuntu-20.04
+    environment:
+      ACCEPT_EULA: 1
+      MSSQL_PID: "Developer"
+      MSSQL_USER: "sa"
+      MSSQL_SA_PASSWORD: "SomethingComplicated123"
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql_data:/var/opt/mssql
+    healthcheck:
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "SomethingComplicated123" -Q "SELECT 1" -b -o /dev/null
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+  database_migrations:
+    image: mcr.microsoft.com/dotnet/nightly/sdk:9.0.100-rc.2
+    working_dir: /app/MssqlAlwaysEncryptedPoc.ExampleDb.Migrations/
+    environment:
+      ConnectionStrings__ExampleDb: "Server=mssql,1433;User ID=sa;Password=SomethingComplicated123;TrustServerCertificate=true;Database=ExampleDb"
+    volumes:
+      - .:/app
+    command: ["dotnet", "run"]
+    depends_on:
+      mssql:
+        condition: service_healthy
+  
+  # ---------------------------------------------------------------------------
+  # very easy to build local images too
+  # just run dotnet publish --configuration Release -t:PublishContainer
+  # ---------------------------------------------------------------------------
+  # database_migrations:
+  #   image: mssqlalwaysencryptedpoc-exampledb-migrations:latest
+  #   environment:
+  #     ConnectionStrings__ExampleDb: ""
+  #   depends_on:
+  #     mssql:
+  #       condition: service_healthy
+
+  web_api:
+    image: mcr.microsoft.com/dotnet/nightly/sdk:9.0.100-rc.2
+    working_dir: /app/MssqlAlwaysEncryptedPoc.Web.Api/
+    environment:
+      ConnectionStrings__ExampleDb: "Server=mssql,1433;User ID=sa;Password=SomethingComplicated123;TrustServerCertificate=true;Database=ExampleDb;Column Encryption Setting=Enabled"
+    depends_on:
+      mssql:
+        condition: service_healthy
+      database_migrations:
+        condition: service_completed_successfully
+    ports:
+      - 8080:8080
+
+volumes:
+  mssql_data:
+    driver: local
+
+# secrets:
+#   sql_password:
+#     file: ./sql_password.txt
+#   api_key:
+#     file: ./api_key.txt

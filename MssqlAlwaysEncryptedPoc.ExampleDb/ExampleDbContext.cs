@@ -2,11 +2,7 @@
 
 namespace MssqlAlwaysEncryptedPoc.ExampleDb;
 
-public class ExampleDbContext : DbContext
+public class ExampleDbContext(DbContextOptions options) : DbContext(options)
 {
-    public ExampleDbContext(DbContextOptions options) : base(options)
-    {
-    }
-
     public DbSet<Example> Examples { get; set; }
 }

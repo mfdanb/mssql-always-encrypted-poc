@@ -18,7 +18,7 @@ public class Program
             .WithTracing(tracing => tracing.AddSource(MigrationService.ActivitySourceName));
 
         builder.Services.AddDbContextPool<ExampleDbContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("sql-database"), sqlOptions =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("ExampleDb") ?? throw new InvalidOperationException("ConnectionStrings__ExampleDb is missing"), sqlOptions =>
             {
                 sqlOptions.MigrationsAssembly(typeof(Program).Assembly.GetName().Name);
             }));
