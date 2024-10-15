@@ -42,18 +42,19 @@ services:
   #     mssql:
   #       condition: service_healthy
 
-  web_api:
+  webapi:
     image: mcr.microsoft.com/dotnet/nightly/sdk:9.0.100-rc.2
     working_dir: /app/MssqlAlwaysEncryptedPoc.Web.Api/
     environment:
       ConnectionStrings__ExampleDb: "Server=mssql,1433;User ID=sa;Password=SomethingComplicated123;TrustServerCertificate=true;Database=ExampleDb;Column Encryption Setting=Enabled"
+    volumes:
+      - .:/app
+    command: ["dotnet", "run"]
     depends_on:
       mssql:
         condition: service_healthy
       database_migrations:
         condition: service_completed_successfully
-    ports:
-      - 8080:8080
 
 volumes:
   mssql_data:
